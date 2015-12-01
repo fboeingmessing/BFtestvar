@@ -1,10 +1,10 @@
 shinyUI(fluidPage(
   titlePanel(title="BFtestvar"),
-  "This web application computes the adjusted fractional Bayes factor presented in Böing-Messing, F.,
-  van Assen, M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2015).", em("Bayesian evaluation
-  of equality and inequality constrained hypotheses on variances."), "Manuscript in preparation. The
+  "This application computes the adjusted fractional Bayes factor presented in BÃ¶ing-Messing, F., van
+  Assen, M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2015).", em("Bayesian evaluation of
+  equality and inequality constrained hypotheses on variances."), "Manuscript in preparation. The
   application was created using", a("Shiny.", href = "http://shiny.rstudio.com/"), "The R source code
-  is available at", a("Shiny.", href = "http://shiny.rstudio.com/"),
+  is available on", a("GitHub.", href = "https://github.com/fboeingmessing/BFtestvar"),
   br(),
   br(),
   
@@ -41,7 +41,7 @@ shinyUI(fluidPage(
                  p(em("* Hypotheses:"), "Use numbers 1,...,J to specify at least two hypotheses, where
                    J is the number of groups. The number 1 refers to the population variance of group 1
                    and so on. For an overview of the types of hypotheses we may specify see
-                   Böing-Messing et al. (2015). Separate hypotheses by a semicolon (;)."),
+                   BÃ¶ing-Messing et al. (2015). Separate hypotheses by a semicolon (;)."),
                  br(),
                  p(strong("Optional input")),
                  p(em("* Logarithm of Bayes factors:"), "Determines whether the app shows Bayes factors
@@ -57,7 +57,7 @@ shinyUI(fluidPage(
                    tags$sub("j"), sep = "")), "and 1, where", HTML(paste("n", tags$sub("j"),
                    sep = "")), "is the sample size in group j. If no fractions are specified (i.e. if
                    the field is empty), then the app uses fractions of", HTML(paste("2/n",
-                   tags$sub("j"), ".", sep = "")), "For details see Böing-Messing et al. (2015)."),
+                   tags$sub("j"), ".", sep = "")), "For details see BÃ¶ing-Messing et al. (2015)."),
                  # http://shiny.rstudio.com/articles/tag-glossary.html
                  p(em("* Number of draws from the posterior distribution:"), "Computing the marginal
                    likelihood under an inequality constrained hypothesis involves sampling
