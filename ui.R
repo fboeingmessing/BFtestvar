@@ -2,9 +2,10 @@ shinyUI(fluidPage(
   titlePanel(title="BFtestvar"),
   "This application computes the adjusted fractional Bayes factor presented in Böing-Messing, F., van
   Assen, M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2015).", em("Bayesian evaluation of
-  equality and inequality constrained hypotheses on variances."), "Manuscript in preparation. The
-  application was created using", a("Shiny.", href = "http://shiny.rstudio.com/"), "The R source code
-  is available on", a("GitHub.", href = "https://github.com/fboeingmessing/BFtestvar"),
+  equality and inequality constrained hypotheses on variances."), "Manuscript submitted for
+  publication. The application was created using", a("Shiny.", href = "http://shiny.rstudio.com/"),
+  "The R source code is available on", a("GitHub.",
+                                         href = "https://github.com/fboeingmessing/BFtestvar"),
   br(),
   br(),
   
@@ -16,7 +17,7 @@ shinyUI(fluidPage(
                  textInput("s2", label = "Sample variances", value = "1, 1.5, 2.25"),
                  textInput("n", label = "Sample sizes", value = "20, 20, 20"),
                  textInput("hypotheses", label = "Hypotheses",
-                           value = "1<2<3; not 1<2<3; 1<2=3; 1<(2,3)")
+                           value = "1<2<3; not (1<2<3 or 3<2<1); 1<2=3; 1<(2,3)")
         ),
 
         tabPanel("Optional input",

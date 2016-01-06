@@ -1,6 +1,6 @@
 ########## log marginal likelihood:
 log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
-
+ 
   J <- length(n)
   if (all(b=="default")) {bF <- 2/n; bB <- (1+1/J)/n} else {bB <- bF <- b}
   nubullet <- sum(bB*n)-J
@@ -10,26 +10,29 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
 
   if (hypothesis=="null") {hypothesis <- paste(as.character(1:length(s2)), collapse="=")}
   if (hypothesis=="order") {hypothesis <- paste(as.character(1:length(s2)), collapse="<")}
-  if (hypothesis=="complement") {hypothesis <- paste(as.character(1:length(s2)), collapse="<"); complement <- T}
-  if (grepl("not", hypothesis)) {hypothesis <- gsub("[not ()]", "", hypothesis); complement <- T}
   if (hypothesis=="unconstrained") {hypothesis <- paste(as.character(1:length(s2)), collapse=",")}
   if (hypothesis=="near-order") {hypothesis <- paste(as.character(1:length(s2)), collapse="<"); nearorder <- T}
-  if (grepl("near", hypothesis)) {hypothesis <- gsub("[near ()]", "", hypothesis); nearorder <- T}
+  if (grepl("near", hypothesis)) {hypothesis <- gsub("[near ()]", "", hypothesis); nearorder <- T}      
+  if (hypothesis=="complement") {hypothesis <- paste(as.character(1:length(s2)), collapse="<"); complement <- T}
+  if (grepl("not", hypothesis)) {
+    complement <- T
+    hypothesis <- gsub("[not ()]", "", hypothesis)
+    if(grepl("r", hypothesis)) hypothesis <- unlist(strsplit(hypothesis, split="r"))
+  }
+  
+  #if (any(duplicated(as.numeric(unlist(strsplit(gsub("[ =<,()]", "", hypothesis), split=""))))) && !complement) {stop("Each variance may only appear once in each hypothesis.")}
                   
   equalities <- gsub("[ ()]", "", hypothesis)      
   equalities <- unlist(strsplit(equalities, split="[,<]"))
-  equalities <- lapply(as.list(unique(equalities)), function(x) as.numeric(unlist(strsplit(x, split="="))))
-
-  index <- unlist(equalities)      
-  slice <- rep(1:length(equalities), sapply(equalities, length))
-  grouping <- index[sort(order(index)[slice])] 
-  s2list <- unname(split(s2[index], f=grouping))
-  nlist <- unname(split(n[index], f=grouping))
-  bFlist <- unname(split(bF[index], f=grouping))
+  equalities <- lapply(as.list(unique(equalities)), function(x) as.numeric(unlist(strsplit(x, split="="))))  
+   
+  s2list <- lapply(equalities, function(x) s2[x])
+  nlist <- lapply(equalities, function(x) n[x])
+  bFlist <- lapply(equalities, function(x) bF[x])
   m <- sapply(equalities, length)
   M <- length(m)                                                            
                                                                                   
-  dfF <- dfFb <- SSF <- SSFb <- rep(NA, M)                                           
+  dfF <- dfFb <- SSF <- SSFb <- rep(NA, M)                                         
   for (i in 1:M) {                                                                                  
     dfF[i] <- sum(nlist[[i]])-m[i]
     dfFb[i] <- sum(bFlist[[i]]*nlist[[i]])-m[i]
@@ -45,7 +48,34 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
   logmbx[c(1, 3)] <- 1/2*log(prod(unlist(bFlist)))-1/2*sum((1-unlist(bFlist))*unlist(nlist))*log(pi)+sum(lgamma(dfF/2)-lgamma(dfFb/2)-1/2*dfF*log(SSF)+1/2*dfFb*log(SSFb))
   logmbx[2] <- -1/2*log(prod(unlist(nlist)))-1/2*(sum(unlist(nlist))-J)*log(pi)+1/2*M*nubullet*log(nubullet*tau2bullet)-M*lgamma(nubullet/2)+sum(lgamma(dfB/2)-1/2*dfB*log(SSB))
 
-  if (nearorder) {
+  if (complement) {
+  
+    inequalities <- lapply(hypothesis, function(x) as.numeric(unlist(strsplit(x, split="<"))))
+    variances <- unique(unlist(inequalities))  
+
+    samp <- matrix(NA, nrow=nsim, ncol=M)
+
+    for (i in 1:length(variances)) {samp[, variances[i]] <- SSF[variances[i]]/rchisq(nsim, dfF[variances[i]])}  
+    ineqs <- matrix(0, nrow=nsim, ncol=length(inequalities))
+    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, inequalities[[i]][j]]<samp[, inequalities[[i]][j+1]])}}
+    PF <- sum(apply(ineqs, 1, max)==M-1)/nsim
+
+    for (i in 1:length(variances)) {samp[, variances[i]] <- SSFb[variances[i]]/rchisq(nsim, dfFb[variances[i]])}
+    ineqs <- matrix(0, nrow=nsim, ncol=length(inequalities))                                   
+    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, inequalities[[i]][j]]<samp[, inequalities[[i]][j+1]])}}  
+    PFb <- sum(apply(ineqs, 1, max)==M-1)/nsim
+
+    for (i in 1:length(variances)) {samp[, variances[i]] <- SSB[variances[i]]/rchisq(nsim, dfB[variances[i]])}
+    ineqs <- matrix(0, nrow=nsim, ncol=length(inequalities))                                    
+    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, inequalities[[i]][j]]<samp[, inequalities[[i]][j+1]])}}  
+    PB <- sum(apply(ineqs, 1, max)==M-1)/nsim
+
+    PBb <- length(inequalities)/factorial(M)
+
+    logmbx <- logmbx+c(log((1-PF)/(1-PFb)), log((1-PB)/(1-PBb)), log((1-PF)/(1-PBb)))
+    #if (0%in%c(1-PF, 1-PFb, 1-PB, 1-PBb)) {warning("Problem in numerical appoximation of probabilities: One or more probabilities are 0. Try using larger nsim.")}
+
+  } else if (nearorder) {
 
     inequalities <- as.numeric(unlist(strsplit(hypothesis, split="<")))
     inequalities <- rep(list(inequalities), J-1)
@@ -75,8 +105,23 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
     #if (0%in%c(PF, PFb, PB, PBb)) {warning("Problem in numerical appoximation of probabilities: One or more probabilities are 0. Try using larger nsim.")}
 
   } else if (grepl("<", hypothesis)) {
+  
+    constraints <- unlist(strsplit(gsub(" ", "", hypothesis), split="[0123456789]"))
+    constraints <- constraints[!constraints==""]
+    inequalities <- vector("character", J+length(constraints))     
+    if (constraints[1]=="(") {
+      inequalities[c(T, F)] <- constraints
+      inequalities[c(F, T)] <- as.character(1:J)
+    } else {
+      inequalities[c(T, F)] <- as.character(1:J)
+      inequalities[c(F, T)] <- constraints
+    }
+    inequalities <- paste(inequalities, sep="", collapse="")
+    
+    equalities <- gsub("[()]", "", inequalities)      
+    equalities <- unlist(strsplit(equalities, split="[,<]"))
+    equalities <- lapply(as.list(unique(equalities)), function(x) as.numeric(unlist(strsplit(x, split="="))))  
 
-    inequalities <- gsub(" ", "", hypothesis)
     for (i in 1:length(equalities)) {inequalities <- sub(paste(equalities[[i]], collapse="="), as.character(i), inequalities)}     
     if (grepl("[(]", inequalities)) {
       brackets <- c(unlist(gregexpr(pattern="[(]", inequalities)), unlist(gregexpr(pattern="[)]", inequalities)))
@@ -132,13 +177,8 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
       }
     }
 
-    if (complement) {
-      logmbx <- logmbx+c(log((1-PF)/(1-PFb)), log((1-PB)/(1-PBb)), log((1-PF)/(1-PBb)))
-      #if (0%in%c(1-PF, 1-PFb, 1-PB, 1-PBb)) {warning("Problem in numerical appoximation of probabilities: One or more probabilities are 0. Try using larger nsim.")}
-    } else {
-      logmbx <- logmbx+c(log(PF/PFb), log(PB/PBb), log(PF/PBb))
-      #if (0%in%c(PF, PFb, PB, PBb)) {warning("Problem in numerical appoximation of probabilities: One or more probabilities are 0. Try using larger nsim.")}
-    }
+    logmbx <- logmbx+c(log(PF/PFb), log(PB/PBb), log(PF/PBb))
+    #if (0%in%c(PF, PFb, PB, PBb)) {warning("Problem in numerical appoximation of probabilities: One or more probabilities are 0. Try using larger nsim.")}
 
   }
 
@@ -149,7 +189,7 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
 
 
 ########## log marginal likelihoods:
-log.marginal.likelihoods <- function(s2, n, b="default", hypotheses, nsim=1e5) {  
+log.marginal.likelihoods <- function(s2, n, b="default", hypotheses, nsim=1e5) {   
   lml <- matrix(NA, nrow=length(hypotheses), ncol=3, dimnames=list(paste("H", as.character(1:length(hypotheses)), sep=""), c("FBF", "BBF", "aFBF")))      
   for (h in 1:length(hypotheses)) {lml[h, ] <- log.marginal.likelihood(s2, n, b, hypotheses[h], nsim)}
   return(lml)
@@ -178,7 +218,7 @@ posterior.probabilities <- function(lml, prior.probabilities=rep(1/nrow(lml), nr
   return(PP)
 }
 
-
+  
 
 ########## shiny function:
 shiny.function <- function(s2, n, hypotheses, log.BF=F, prior.probabilities=NA, b="default", nsim=1e5, seed=NA) {        
