@@ -1,10 +1,10 @@
 shinyUI(fluidPage(
   titlePanel(title="BFtestvar"),
-  "This application computes the adjusted fractional Bayes factor presented in Anonymous (2015).", em("Bayesian evaluation of
-  equality and inequality constrained hypotheses on variances."), "Manuscript submitted for
-  publication. The application was created using", a("Shiny.", href = "http://shiny.rstudio.com/"),
-  "The R source code is available on", a("GitHub.",
-                                         href = "https://github.com/fboeingmessing/BFtestvar"),
+  "Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
+  "application computes the adjusted fractional Bayes factor presented in Anonymous (2015).",
+  em("Bayesian evaluation of equality and inequality constrained hypotheses on variances."),
+  "Manuscript submitted for publication. The R source code is available on", a("GitHub.", href =
+  "https://github.com/fboeingmessing/BFtestvar"),
   br(),
   br(),
   
