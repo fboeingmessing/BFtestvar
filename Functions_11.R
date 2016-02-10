@@ -57,17 +57,17 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
 
     for (i in 1:length(variances)) {samp[, variances[i]] <- SSF[variances[i]]/rchisq(nsim, dfF[variances[i]])}  
     ineqs <- matrix(0, nrow=nsim, ncol=length(inequalities))
-    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, inequalities[[i]][j]]<samp[, inequalities[[i]][j+1]])}}
+    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, which(variances==inequalities[[i]][j])]<samp[, which(variances==inequalities[[i]][j+1])])}}
     PF <- sum(apply(ineqs, 1, max)==M-1)/nsim
 
     for (i in 1:length(variances)) {samp[, variances[i]] <- SSFb[variances[i]]/rchisq(nsim, dfFb[variances[i]])}
     ineqs <- matrix(0, nrow=nsim, ncol=length(inequalities))                                   
-    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, inequalities[[i]][j]]<samp[, inequalities[[i]][j+1]])}}  
+    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, which(variances==inequalities[[i]][j])]<samp[, which(variances==inequalities[[i]][j+1])])}}
     PFb <- sum(apply(ineqs, 1, max)==M-1)/nsim
 
     for (i in 1:length(variances)) {samp[, variances[i]] <- SSB[variances[i]]/rchisq(nsim, dfB[variances[i]])}
     ineqs <- matrix(0, nrow=nsim, ncol=length(inequalities))                                    
-    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, inequalities[[i]][j]]<samp[, inequalities[[i]][j+1]])}}  
+    for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs[, i] <- ineqs[, i]+(samp[, which(variances==inequalities[[i]][j])]<samp[, which(variances==inequalities[[i]][j+1])])}}
     PB <- sum(apply(ineqs, 1, max)==M-1)/nsim
 
     PBb <- length(inequalities)/factorial(M)
@@ -220,14 +220,29 @@ posterior.probabilities <- function(lml, prior.probabilities=rep(1/nrow(lml), nr
 
   
 
-########## shiny function:
-shiny.function <- function(s2, n, hypotheses, log.BF=F, prior.probabilities=NA, b="default", nsim=1e5, seed=NA) {        
-  if (!is.na(seed)) {set.seed(seed)}
-  lml <- log.marginal.likelihoods(s2, n, b, hypotheses, nsim)
-  bf <- bayes.factors(lml, log.BF) 
-  if (all(is.na(prior.probabilities))) {prior.probabilities <- rep(1/nrow(lml), nrow(lml))}
-  pp <- posterior.probabilities(lml, prior.probabilities)  
-  results <- list(bf[[3]], t(pp[, 3]))
-  names(results) <- c(ifelse(log.BF, "log Bayes factors", "Bayes factors"), "Posterior probabilities")
-  return(results)
-}
+########################################################################## TEST
+s2 <- c(1, 1.5, 2.25)
+n <- c(80, 90, 100)                                       
+
+hypothesis <- "near 1<2<3"
+
+hypothesis <- "not 1<2<3"
+hypothesis <- "not 3<1<2"
+hypothesis <- "not (1<2<3 or 3<2<1)"
+hypothesis <- "not (3<2<1 or 1<2<3)"
+hypothesis <- "not (3 < 2 < 1 or 1 < 2 < 3)"
+hypothesis <- "not (1<2<3 or 3<2<1 or 1<3<2)"
+hypothesis <- "not (3<2<1 or 1<3<2 or 1<2<3)"
+
+n <- c(200, 200, 200)
+s2 <- c(1, 1.5, 2.25)
+hypothesis <- "3<2<1"
+hypothesis <- "1=2=3"
+hypotheses <- c("3<2<1", "1=2=3")
+nsim <- 1e5
+b <- "default"
+
+log.marginal.likelihood(s2, n, b, hypothesis, nsim)
+lml <- log.marginal.likelihoods(s2, n, b, hypotheses, nsim)
+bayes.factors(lml)
+posterior.probabilities(lml)
