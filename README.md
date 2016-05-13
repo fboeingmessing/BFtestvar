@@ -1,2 +1,2 @@
 # BFtestvar
-Bayes Factors for TESTing VARiances. This Shiny application computes the adjusted fractional Bayes factor presented in Anonymous (2015). *Bayesian evaluation of equality and inequality constrained hypotheses on variances.* Manuscript submitted for publication.
+Bayes Factors for TESTing VARiances. This Shiny (http://shiny.rstudio.com/) application computes the adjusted fractional Bayes factor presented in Anonymous (2016). *Bayesian evaluation of constrained hypotheses on variances of multiple independent groups.* Manuscript submitted for publication.
