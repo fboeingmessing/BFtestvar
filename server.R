@@ -1,4 +1,4 @@
-source("Functions_11.R")
+source("Functions_13.R")
 
 shinyServer(function(input, output) {
   
@@ -22,7 +22,7 @@ shinyServer(function(input, output) {
       b <- sapply(b, function(x) if(length(x)==1) {as.numeric(x)} else
                                                   {as.numeric(x[1])/as.numeric(x[2])})
     }
-    nsim <- input$nsim
+    nsim <- if (is.na(input$nsim)) {100000} else {input$nsim}
     seed <- if (is.na(input$seed)) {NA} else {input$seed}
 
     results <- shiny.function(s2, n, hypotheses, log.BF, prior.probabilities, b, nsim, seed)[[1]]
@@ -50,7 +50,7 @@ shinyServer(function(input, output) {
       b <- sapply(b, function(x) if(length(x)==1) {as.numeric(x)} else
       {as.numeric(x[1])/as.numeric(x[2])})
     }
-    nsim <- input$nsim
+    nsim <- if (is.na(input$nsim)) {100000} else {input$nsim}
     seed <- if (is.na(input$seed)) {NA} else {input$seed}
     
     results <- shiny.function(s2, n, hypotheses, log.BF, prior.probabilities, b, nsim, seed)[[2]]

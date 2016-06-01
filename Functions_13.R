@@ -176,8 +176,17 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
         PBb <- sum(ineqs==ninequalities)/nsim
       }
     }
-
-    logmbx <- logmbx+c(log(PF/PFb), log(PB/PBb), log(PF/PBb))
+    
+    if (any(sapply(inequalities, function(x) length(unique(dfFb[x])))>1)) {
+      for (i in 1:length(variances)) {samp[, variances[i]] <- dfFb[variances[i]]/rchisq(nsim, dfFb[variances[i]])}
+      ineqs <- rep(0, nsim)                                      
+      for (i in 1:length(inequalities)) {for (j in 1:(length(inequalities[[i]])-1)) {ineqs <- ineqs+(samp[, inequalities[[i]][j]]<samp[, inequalities[[i]][j+1]])}}
+      PaFb <- sum(ineqs==ninequalities)/nsim
+    } else {
+      PaFb <- PBb
+    }
+    
+    logmbx <- logmbx+c(log(PF/PFb), log(PB/PBb), log(PF/PaFb))
     #if (0%in%c(PF, PFb, PB, PBb)) {warning("Problem in numerical appoximation of probabilities: One or more probabilities are 0. Try using larger nsim.")}
 
   }
@@ -203,7 +212,8 @@ bayes.factors <- function(lml, log.BF=F) {
   BBF  <- unname(sapply(lml[, 2], function(x) lml[, 2]-x, simplify=T, USE.NAMES=F))
   aFBF <- unname(sapply(lml[, 3], function(x) lml[, 3]-x, simplify=T, USE.NAMES=F))
   BF <- list(FBF, BBF, aFBF)
-  names(BF) <- c("FBF", "BBF", "aFBF")  
+  names(BF) <- c("FBF", "BBF", "aFBF")      
+  for (i in 1:length(BF)) {diag(BF[[i]]) <- 0}                                          
   if (log.BF==F) {BF <- lapply(BF, exp)}  
   return(BF)
 }
@@ -214,7 +224,8 @@ bayes.factors <- function(lml, log.BF=F) {
 posterior.probabilities <- function(lml, prior.probabilities=rep(1/nrow(lml), nrow(lml))) {
   if (!identical(sum(prior.probabilities), 1)) {stop("The prior probabilities do not sum to 1.")}
   PP <- matrix(NA, nrow=nrow(lml), ncol=3, dimnames=list(rownames(lml), c("FBF", "BBF", "aFBF")))
-  for (i in 1:3) {PP[, i] <- prior.probabilities*sapply(lml[, i], function(x) 1/sum(exp(lml[, i]-x)*prior.probabilities), simplify=T, USE.NAMES=F)}
+  for (i in 1:3) {PP[, i] <- prior.probabilities*sapply(lml[, i], function(x) 1/sum(exp(lml[, i]-x)*prior.probabilities, na.rm=T), simplify=T, USE.NAMES=F)}
+  PP[is.infinite(PP)] <- NA
   return(PP)
 }
 
@@ -230,4 +241,4 @@ shiny.function <- function(s2, n, hypotheses, log.BF=F, prior.probabilities=NA, 
   results <- list(bf[[3]], t(pp[, 3]))
   names(results) <- c(ifelse(log.BF, "log Bayes factors", "Bayes factors"), "Posterior probabilities")
   return(results)
-}     
+}

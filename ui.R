@@ -1,10 +1,17 @@
 shinyUI(fluidPage(
   titlePanel(title="BFtestvar"),
   "Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
-  "application computes the adjusted fractional Bayes factor presented in Anonymous (2015).",
-  em("Bayesian evaluation of equality and inequality constrained hypotheses on variances."),
+  "application computes the adjusted fractional Bayes factor presented in Anonymous (2016).",
+  em("Bayesian evaluation of constrained hypotheses on variances of multiple independent groups."),
   "Manuscript submitted for publication. The R source code is available on", a("GitHub.", href =
   "https://github.com/fboeingmessing/BFtestvar"),
+  
+  #"Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
+  #"application computes the adjusted fractional Bayes factor presented in", br(), "Anonymous (2016).",
+  #em("Bayesian evaluation of constrained hypotheses on variances of multiple independent groups."),
+  #"Manuscript", br(), "submitted for publication. The R source code is available on", a("GitHub.", href =
+  #"https://github.com/fboeingmessing/BFtestvar"),
+  
   br(),
   br(),
   
@@ -16,7 +23,7 @@ shinyUI(fluidPage(
                  textInput("s2", label = "Sample variances", value = "1, 1.5, 2.25"),
                  textInput("n", label = "Sample sizes", value = "20, 20, 20"),
                  textInput("hypotheses", label = "Hypotheses",
-                           value = "1<2<3; not (1<2<3 or 3<2<1); 1<2=3; 1<(2,3)")
+                           value = "1=2=3; 1<2<3; not 1<2<3")
         ),
 
         tabPanel("Optional input",
@@ -28,7 +35,7 @@ shinyUI(fluidPage(
                  textInput("b", label = "Fractions", value = NA),
                  numericInput("nsim",
                               label = "Number of draws from the posterior distribution",
-                              value = 100000),
+                              value = NA),
                  numericInput("seed", label = "Seed", value = NA)
         ),
         
@@ -40,8 +47,10 @@ shinyUI(fluidPage(
                  p(em("* Sample sizes:"), "Separate sample sizes by a comma (,)."),
                  p(em("* Hypotheses:"), "Use numbers 1,...,J to specify at least two hypotheses, where
                    J is the number of groups. The number 1 refers to the population variance of group 1
-                   and so on. For an overview of the types of hypotheses we may specify see
-                   Böing-Messing et al. (2015). Separate hypotheses by a semicolon (;)."),
+                   and so on. Inequality constraints need to be specified using the less-than symbol
+                   (<); the greater-than symbol (>) is not supported. For an overview of the types of
+                   hypotheses we may specify see Anonymous (2016). Separate hypotheses by a semicolon
+                   (;)."),
                  br(),
                  p(strong("Optional input")),
                  p(em("* Logarithm of Bayes factors:"), "Determines whether the app shows Bayes factors
@@ -57,15 +66,16 @@ shinyUI(fluidPage(
                    tags$sub("j"), sep = "")), "and 1, where", HTML(paste("n", tags$sub("j"),
                    sep = "")), "is the sample size in group j. If no fractions are specified (i.e. if
                    the field is empty), then the app uses fractions of", HTML(paste("2/n",
-                   tags$sub("j"), ".", sep = "")), "For details see Böing-Messing et al. (2015)."),
+                   tags$sub("j"), ".", sep = "")), "For details see Anonymous (2016)."),
                  # http://shiny.rstudio.com/articles/tag-glossary.html
                  p(em("* Number of draws from the posterior distribution:"), "Computing the marginal
                    likelihood under an inequality constrained hypothesis involves sampling
-                   from the posterior distribution of the group variances. The default number of draws
-                   from the posterior is 100,000. For most applications this is sufficient. Larger
-                   numbers result in more precise approximations of the marginal likelihood. In case
-                   the number of inequality constraints under a certain hypothesis is large, one might
-                   consider increasing the number of draws from the posterior."),
+                   from the posterior distribution of the group variances. If no number is specified
+                   (i.e. if the field is empty), then the app uses a default number of draws of
+                   100,000. For most applications this is sufficient. Larger numbers result in more
+                   precise approximations of the marginal likelihood. In case the number of inequality
+                   constraints under a certain hypothesis is large, one might consider increasing the
+                   number of draws from the posterior."),
                  p(em("* Seed:"), "Seed for the Monte Carlo procedure described above. Is useful for
                    exactly replicating results. If no seed is specified (i.e. if the field is empty),
                    then the app uses the standard R procedure for automatically generating seeds."),
@@ -98,5 +108,7 @@ shinyUI(fluidPage(
       strong("Posterior probabilities of the hypotheses"),
       tableOutput("posteriorprobabilities")
     )
-  )
+  ),
+  
+  submitButton("Submit")
 ))
