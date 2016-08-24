@@ -13,11 +13,13 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
   if (hypothesis=="unconstrained") {hypothesis <- paste(as.character(1:length(s2)), collapse=",")}
   if (hypothesis=="near-order") {hypothesis <- paste(as.character(1:length(s2)), collapse="<"); nearorder <- T}
   if (grepl("near", hypothesis)) {hypothesis <- gsub("[near ()]", "", hypothesis); nearorder <- T}      
-  if (hypothesis=="complement") {hypothesis <- paste(as.character(1:length(s2)), collapse="<"); complement <- T}
+  if (hypothesis=="complement") {hypothesis <- paste(as.character(1:length(s2)), collapse="<"); complement <- T}                                                       
   if (grepl("not", hypothesis)) {
     complement <- T
     hypothesis <- gsub("[not ()]", "", hypothesis)
     if(grepl("r", hypothesis)) hypothesis <- unlist(strsplit(hypothesis, split="r"))
+    hypothesis <- hypothesis[!grepl("=", hypothesis) & grepl("<", hypothesis)]
+    if (identical(hypothesis, character(0))) hypothesis <- paste(as.character(1:length(s2)), collapse=",")       
   }
   
   #if (any(duplicated(as.numeric(unlist(strsplit(gsub("[ =<,()]", "", hypothesis), split=""))))) && !complement) {stop("Each variance may only appear once in each hypothesis.")}
@@ -229,8 +231,8 @@ posterior.probabilities <- function(lml, prior.probabilities=rep(1/nrow(lml), nr
   return(PP)
 }
 
-
-
+  
+                                             
 ########## shiny function:
 shiny.function <- function(s2, n, hypotheses, log.BF=F, prior.probabilities=NA, b="default", nsim=1e5, seed=NA) {        
   if (!is.na(seed)) {set.seed(seed)}
