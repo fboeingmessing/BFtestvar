@@ -15,11 +15,11 @@ log.marginal.likelihood <- function(s2, n, b="default", hypothesis, nsim=1e5) {
   if (grepl("near", hypothesis)) {hypothesis <- gsub("[near ()]", "", hypothesis); nearorder <- T}      
   if (hypothesis=="complement") {hypothesis <- paste(as.character(1:length(s2)), collapse="<"); complement <- T}                                                       
   if (grepl("not", hypothesis)) {
-    complement <- T
     hypothesis <- gsub("[not ()]", "", hypothesis)
     if(grepl("r", hypothesis)) hypothesis <- unlist(strsplit(hypothesis, split="r"))
     hypothesis <- hypothesis[!grepl("=", hypothesis) & grepl("<", hypothesis)]
     if (identical(hypothesis, character(0))) hypothesis <- paste(as.character(1:length(s2)), collapse=",")       
+    if(any(grepl("<", hypothesis))) complement <- T    
   }
   
   #if (any(duplicated(as.numeric(unlist(strsplit(gsub("[ =<,()]", "", hypothesis), split=""))))) && !complement) {stop("Each variance may only appear once in each hypothesis.")}
