@@ -34,7 +34,7 @@ shinyUI(fluidPage(
                            value = NA),
                  textInput("b", label = "Fractions", value = NA),
                  numericInput("nsim",
-                              label = "Number of draws from the posterior distribution",
+                              label = "Number of simulation draws",
                               value = NA),
                  numericInput("seed", label = "Seed", value = NA)
         ),
@@ -68,14 +68,14 @@ shinyUI(fluidPage(
                    the field is empty), then the app uses fractions of", HTML(paste("2/n",
                    tags$sub("j"), ".", sep = "")), "For details see Anonymous (2016)."),
                  # http://shiny.rstudio.com/articles/tag-glossary.html
-                 p(em("* Number of draws from the posterior distribution:"), "Computing the marginal
-                   likelihood under an inequality constrained hypothesis involves sampling
-                   from the posterior distribution of the group variances. If no number is specified
-                   (i.e. if the field is empty), then the app uses a default number of draws of
-                   100,000. For most applications this is sufficient. Larger numbers result in more
-                   precise approximations of the marginal likelihood. In case the number of inequality
+                 p(em("* Number of simulation draws:"), "Computing the marginal likelihood under an
+                   inequality constrained hypothesis involves sampling from the posterior and the prior
+                   distribution of the group variances. If no number is specified (i.e. if the field is
+                   empty), then the app uses a default number of draws of 100,000. For most
+                   applications this is sufficient. Larger numbers result in more precise
+                   approximations of the marginal likelihood. In case the number of inequality
                    constraints under a certain hypothesis is large, one might consider increasing the
-                   number of draws from the posterior."),
+                   number of simulation draws."),
                  p(em("* Seed:"), "Seed for the Monte Carlo procedure described above. Is useful for
                    exactly replicating results. If no seed is specified (i.e. if the field is empty),
                    then the app uses the standard R procedure for automatically generating seeds."),
