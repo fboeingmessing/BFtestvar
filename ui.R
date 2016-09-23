@@ -1,16 +1,17 @@
 shinyUI(fluidPage(
   titlePanel(title="BFtestvar"),
-  "Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
-  "application computes the adjusted fractional Bayes factor presented in Böing-Messing, F., van Assen,
-  M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2016). Bayesian evaluation of constrained
-  hypotheses on variances of multiple independent groups.", em("Psychological Methods."), "The R source
-  code is available on", a("GitHub.", href = "https://github.com/fboeingmessing/BFtestvar"),
-  
   #"Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
-  #"application computes the adjusted fractional Bayes factor presented in", br(), "Anonymous (2016).",
-  #em("Bayesian evaluation of constrained hypotheses on variances of multiple independent groups."),
-  #"Manuscript", br(), "submitted for publication. The R source code is available on", a("GitHub.", href =
-  #"https://github.com/fboeingmessing/BFtestvar"),
+  #"application computes the adjusted fractional Bayes factor presented in Böing-Messing, F., van Assen,
+  #M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2016). Bayesian evaluation of constrained
+  #hypotheses on variances of multiple independent groups.", em("Psychological Methods."), "The R source
+  #code is available on", a("GitHub.", href = "https://github.com/fboeingmessing/BFtestvar"),
+  
+  "Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
+  "application computes the adjusted fractional Bayes factor presented in", br(), "Böing-Messing, F.,
+  van Assen, M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2016). Bayesian evaluation of
+  constrained", br(), "hypotheses on variances of multiple independent groups.", em("Psychological
+  Methods."), "The R source code is available on", a("GitHub.",
+  href = "https://github.com/fboeingmessing/BFtestvar"),
   
   br(),
   br(),
