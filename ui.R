@@ -1,17 +1,18 @@
 shinyUI(fluidPage(
   titlePanel(title="BFtestvar"),
-  #"Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
-  #"application computes the adjusted fractional Bayes factor presented in Böing-Messing, F., van Assen,
-  #M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2016). Bayesian evaluation of constrained
-  #hypotheses on variances of multiple independent groups.", em("Psychological Methods."), "The R source
-  #code is available on", a("GitHub.", href = "https://github.com/fboeingmessing/BFtestvar"),
-  
   "Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
-  "application computes the adjusted fractional Bayes factor presented in", br(), "Böing-Messing, F.,
-  van Assen, M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2016). Bayesian evaluation of
-  constrained", br(), "hypotheses on variances of multiple independent groups.", em("Psychological
-  Methods."), "The R source code is available on", a("GitHub.",
+  "application computes the adjusted fractional Bayes factor presented in Böing-Messing, F., van
+  Assen, M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2016). Bayesian evaluation of
+  constrained hypotheses on variances of multiple independent groups.", em("Psychological Methods."),
+  "The R source code is available on", a("GitHub.",
   href = "https://github.com/fboeingmessing/BFtestvar"),
+  
+  #"Bayes Factors for TESTing VARiances. This", a("Shiny", href = "http://shiny.rstudio.com/"),
+  #"application computes the adjusted fractional Bayes factor presented in", br(), "Böing-Messing, F.,
+  #van Assen, M. A. L. M., Hofman, A. D., Hoijtink, H., & Mulder, J. (2016). Bayesian evaluation of
+  #constrained", br(), "hypotheses on variances of multiple independent groups.", em("Psychological
+  #Methods."), "The R source code is available on", a("GitHub.",
+  #href = "https://github.com/fboeingmessing/BFtestvar"),
   
   br(),
   br(),
@@ -50,8 +51,8 @@ shinyUI(fluidPage(
                    J is the number of groups. The number 1 refers to the population variance of group 1
                    and so on. Inequality constraints need to be specified using the less-than symbol
                    (<); the greater-than symbol (>) is not supported. For an overview of the types of
-                   hypotheses we may specify see Anonymous (2016). Separate hypotheses by a semicolon
-                   (;)."),
+                   hypotheses we may specify see Böing-Messing et al. (2016). Separate hypotheses by a
+                   semicolon (;)."),
                  br(),
                  p(strong("Optional input")),
                  p(em("* Logarithm of Bayes factors:"), "Determines whether the app shows Bayes factors
@@ -67,7 +68,7 @@ shinyUI(fluidPage(
                    tags$sub("j"), sep = "")), "and 1, where", HTML(paste("n", tags$sub("j"),
                    sep = "")), "is the sample size in group j. If no fractions are specified (i.e. if
                    the field is empty), then the app uses fractions of", HTML(paste("2/n",
-                   tags$sub("j"), ".", sep = "")), "For details see Anonymous (2016)."),
+                   tags$sub("j"), ".", sep = "")), "For details see Böing-Messing et al. (2016)."),
                  # http://shiny.rstudio.com/articles/tag-glossary.html
                  p(em("* Number of simulation draws:"), "Computing the marginal likelihood under an
                    inequality constrained hypothesis involves sampling from the posterior and the prior
