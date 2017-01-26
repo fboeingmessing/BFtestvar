@@ -26,8 +26,11 @@ shinyServer(function(input, output) {
     seed <- if (is.na(input$seed)) {NA} else {input$seed}
 
     results <- shiny.function(s2, n, hypotheses, log.BF, prior.probabilities, b, nsim, seed)[[1]]
+    colnames(results) <- 1:ncol(results)
+    return(results)
     },
-    digits = 3, sanitize.rownames.function = function(x) paste('<b>',x,'</b>', sep ='')
+    digits = 3, hover = TRUE, bordered = TRUE, colnames = TRUE, rownames = TRUE,
+    sanitize.rownames.function = function(x) paste('<b>',x,'</b>', sep ='')
   )
   
   output$posteriorprobabilities <- renderTable({      
@@ -55,7 +58,7 @@ shinyServer(function(input, output) {
     
     results <- shiny.function(s2, n, hypotheses, log.BF, prior.probabilities, b, nsim, seed)[[2]]
     },
-    digits = 3, include.rownames = FALSE
+    digits = 3, hover = TRUE, bordered = TRUE, colnames = TRUE, rownames = FALSE
   )
 
 })
